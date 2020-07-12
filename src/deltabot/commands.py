@@ -39,10 +39,22 @@ class Commands:
             return None
         parts = message.text.split(maxsplit=1)
         cmd_name = parts.pop(0)
+        is_group = message.chat.is_group()
+
+        if '@' in cmd_name:
+            cmd_name, addr = cmd_name.split('@', maxsplit=1)
+            # ignore command in groups if it isn't for this bot
+            if is_group and self.bot.self_contact.addr != addr:
+                return None
+
         cmd_def = self._cmd_defs.get(cmd_name)
         if cmd_def is None:
             reply = "unknown command {!r}".format(cmd_name)
             self.logger.warn(reply)
+            # when we get a way to know if an account is a bot,
+            # only ignore if there are other bots in the group
+            if is_group:
+                return None
             replies.add(text=reply)
             return True
 

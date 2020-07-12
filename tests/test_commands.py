@@ -23,6 +23,11 @@ def test_run_help(mocker):
     assert "/help" in reply.text
 
 
+def test_cmd_with_mention(mocker):
+    reply = mocker.run_command("/help@" + mocker.bot.self_contact.addr)
+    assert "/help" in reply.text
+
+
 def test_register(mock_bot):
     def my_command(command):
         """ my commands example. """
